@@ -1,4 +1,4 @@
-# React Guide For Cloud SDK Integration
+# React Guide For Cloud SDK API Integration
 
 A React + TypeScript + Vite app for identity verification using the CredenceID Cloud SDK Apis. Supports ISO 18013-5 mDL, OpenID4VP (Google Wallet), Annex B (Samsung Wallet), and W3C OpenID4VP flows.
 
