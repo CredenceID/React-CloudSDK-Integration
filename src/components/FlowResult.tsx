@@ -41,9 +41,10 @@ function formatKey(key: string): string {
     .join(" ");
 }
 
-function imgSrc(base64: string): string {
-  const mime = base64.startsWith("iVBO") ? "image/png" : "image/jpeg";
-  return `data:${mime};base64,${base64}`;
+function imgSrc(raw: string): string {
+  if (raw.startsWith("data:")) return raw;
+  const mime = raw.startsWith("iVBO") ? "image/png" : "image/jpeg";
+  return `data:${mime};base64,${raw}`;
 }
 
 function isImageField(key: string, value: unknown): value is string {
