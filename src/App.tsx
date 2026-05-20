@@ -197,15 +197,33 @@ function App() {
               onClose={() => setFlowResult(null)}
             />
           ) : (
-            <div className="app-content-empty">
-              <div className="app-content-empty-icon">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M9 12l2 2 4-4" />
-                  <circle cx="12" cy="12" r="10" />
-                </svg>
+            <div className="result-placeholder">
+              <div className="result-placeholder-header">
+                <span className="result-placeholder-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+                    <rect x="9" y="3" width="6" height="4" rx="1" />
+                    <path d="m9 12 2 2 4-4" />
+                  </svg>
+                </span>
+                <div>
+                  <h2 className="result-placeholder-title">Verification Results</h2>
+                  <p className="result-placeholder-subtitle">Identity Info and authentication results</p>
+                </div>
               </div>
-              <p className="app-content-empty-title">No result yet</p>
-              <p className="app-content-empty-hint">Select a verification flow to get started.</p>
+
+              <div className="result-placeholder-body">
+                <div className="result-placeholder-section">
+                  <span className="result-placeholder-section-label">Identity Info</span>
+                  <p className="result-placeholder-section-desc">Parsed holder attributes and visual identity data.</p>
+                  <div className="result-placeholder-empty-box">No presentation results yet</div>
+                </div>
+                <div className="result-placeholder-section">
+                  <span className="result-placeholder-section-label">Authentication Status</span>
+                  <p className="result-placeholder-section-desc">Trust checks, issuer validation, and integrity indicators.</p>
+                  <div className="result-placeholder-empty-box">No presentation results yet</div>
+                </div>
+              </div>
             </div>
           )}
         </main>
