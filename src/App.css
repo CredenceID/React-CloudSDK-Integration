@@ -436,6 +436,8 @@
 
 .result-placeholder-section {
   padding: 28px;
+  display: flex;
+  flex-direction: column;
 
   &:first-child {
     border-right: 1px solid var(--border);
@@ -474,6 +476,7 @@
   color: var(--text);
   opacity: 0.55;
   background: var(--social-bg);
+  margin-top: auto;
 }
 
 /* ── FlowResult component ────────────────────────────────────────────────────── */
