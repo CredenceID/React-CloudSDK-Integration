@@ -205,7 +205,7 @@ function App() {
                 </svg>
               </div>
               <p className="app-content-empty-title">No result yet</p>
-              <p className="app-content-empty-hint">Select a verification flow on the left to get started.</p>
+              <p className="app-content-empty-hint">Select a verification flow to get started.</p>
             </div>
           )}
         </main>
