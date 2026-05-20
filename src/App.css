@@ -96,6 +96,13 @@
   flex-direction: column;
   overflow-y: hidden;
   background: var(--bg);
+
+  @media (max-width: 1024px) {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    overflow-y: visible;
+  }
 }
 
 /* Brand block */
@@ -365,6 +372,10 @@
 
   @media (max-width: 1024px) {
     padding: 24px 20px;
+  }
+
+  @media (max-width: 1024px) {
+    overflow-y: visible;
   }
 }
 
