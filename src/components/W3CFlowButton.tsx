@@ -7,8 +7,11 @@ import type { FlowResultData } from "./FlowResult";
 
 interface W3CFlowButtonProps {
   label: string;
+  subtitle?: string;
   icon?: React.ReactNode;
   onResult?: (data: FlowResultData) => void;
+  onStart?: () => void;
+  isActive?: boolean;
   disabled?: boolean;
 }
 
@@ -16,7 +19,33 @@ type Phase = "idle" | "initiating" | "active";
 
 const MAX_POLL_ATTEMPTS = 120; // 120 × 2 s = 4 min timeout
 
-export function W3CFlowButton({ label, icon, onResult, disabled }: W3CFlowButtonProps) {
+function Spinner() {
+  return (
+    <svg
+      className="flow-spinner"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+    </svg>
+  );
+}
+
+export function W3CFlowButton({
+  label,
+  subtitle,
+  icon,
+  onResult,
+  onStart,
+  isActive,
+  disabled,
+}: W3CFlowButtonProps) {
   const { accessToken } = useCloudSDK();
   const [phase, setPhase] = useState<Phase>("idle");
   const [deepLink, setDeepLink] = useState("");
@@ -37,6 +66,7 @@ export function W3CFlowButton({ label, icon, onResult, disabled }: W3CFlowButton
       return;
     }
 
+    onStart?.();
     cancelRef.current = false;
     attemptsRef.current = 0;
     setPhase("initiating");
@@ -46,7 +76,6 @@ export function W3CFlowButton({ label, icon, onResult, disabled }: W3CFlowButton
         await initiateW3CApi(accessToken);
       if (cancelRef.current) return;
 
-      // Build the openid4vp:// deep link the wallet expects.
       const link =
         `openid4vp://authorize` +
         `?client_id=${encodeURIComponent(authorizationRequest.client_id)}` +
@@ -77,7 +106,6 @@ export function W3CFlowButton({ label, icon, onResult, disabled }: W3CFlowButton
 
           setPhase("idle");
 
-          // Map W3C verificationDetails into FlowResult's auth shape.
           const vd = result.verificationDetails;
           const adapted: FlowResultData = {
             res: result.success,
@@ -137,28 +165,22 @@ export function W3CFlowButton({ label, icon, onResult, disabled }: W3CFlowButton
   return (
     <>
       <button
-        className={`flow-btn${isRunning ? " flow-btn--running" : ""}`}
+        className={`flow-btn-card${isRunning ? " flow-btn-card--running" : ""}${isActive ? " flow-btn-card--active" : ""}`}
         onClick={handleStart}
         disabled={disabled || isRunning}
       >
-        {icon && <span className="flow-btn-icon">{icon}</span>}
-        <span className="flow-btn-label">
-          {phase === "initiating" ? (
-            <svg
-              className="flow-spinner"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              aria-hidden="true"
-            >
-              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-            </svg>
-          ) : (
-            label
+        {isActive && !isRunning && (
+          <span className="flow-btn-card-dot" aria-hidden="true" />
+        )}
+        <span className="flow-btn-card-icon">
+          {phase === "initiating" ? <Spinner /> : icon}
+        </span>
+        <span className="flow-btn-card-text">
+          <span className="flow-btn-card-title">
+            {phase === "initiating" ? "Starting…" : label}
+          </span>
+          {subtitle && phase === "idle" && (
+            <span className="flow-btn-card-subtitle">{subtitle}</span>
           )}
         </span>
       </button>

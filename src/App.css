@@ -3,11 +3,9 @@
 .sdk-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 14px 28px;
+  gap: 16px;
+  padding: 12px 24px;
   border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
   background: var(--bg);
   position: sticky;
   top: 0;
@@ -18,22 +16,16 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-shrink: 0;
 }
 
-.sdk-logo {
-  display: flex;
-  align-items: center;
-  color: var(--accent);
+.sdk-logo-img {
+  height: 32px;
+  width: auto;
+  display: block;
+  object-fit: contain;
 }
 
-.sdk-title {
-  font-family: var(--heading);
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--text-h);
-  letter-spacing: -0.2px;
-}
+/* ── Status badge (shared between header and sidebar) ────────────────────────── */
 
 .sdk-status-badge {
   display: inline-flex;
@@ -62,6 +54,11 @@
   }
 }
 
+.sidebar-status-badge {
+  align-self: flex-start;
+  margin-top: 10px;
+}
+
 .sdk-status-dot {
   width: 7px;
   height: 7px;
@@ -81,159 +78,192 @@
   50% { opacity: 0.3; }
 }
 
-.sdk-header-info {
+/* ── Two-column app layout ───────────────────────────────────────────────────── */
+
+.app-layout {
   display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.sdk-info-group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.sdk-info-label {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--text);
-  opacity: 0.7;
-}
-
-.sdk-info-value {
-  font-size: 13px;
-  color: var(--text-h);
-  font-weight: 500;
-}
-
-.sdk-token {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  code {
-    font-family: var(--mono);
-    font-size: 12px;
-    background: var(--code-bg);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--text-h);
-  }
-}
-
-.sdk-copy-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3px;
-  border: none;
-  background: transparent;
-  color: var(--text);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: color 0.15s, background 0.15s;
-  flex-shrink: 0;
-
-  &:hover:not(:disabled) {
-    color: var(--accent);
-    background: var(--accent-bg);
-  }
-  &:disabled {
-    opacity: 0.3;
-    cursor: default;
-  }
-}
-
-/* ── Verification Flows ──────────────────────────────────────────────────────── */
-
-.flows-main {
-  padding: 40px 32px;
   flex: 1;
-
-  @media (max-width: 1024px) {
-    padding: 28px 20px;
-  }
+  min-height: 0;
 }
 
-.flows-heading {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--text-h);
-  margin: 0 0 24px;
-  text-align: left;
-}
+/* ── Left Sidebar ────────────────────────────────────────────────────────────── */
 
-.flows-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
-}
-
-.flow-btn {
+.app-sidebar {
+  width: 35%;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  background: var(--bg);
+}
+
+/* Brand block */
+
+.sidebar-brand {
+  padding: 24px 20px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand-icon {
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 28px 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+
+.sidebar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0 0 7px;
+  letter-spacing: -0.4px;
+}
+
+.sidebar-desc {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Flows section */
+
+.sidebar-flows {
+  padding: 18px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-flows-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text);
+  opacity: 0.5;
+  padding: 0 2px;
+}
+
+/* ── Flow cards (2-column grid) ──────────────────────────────────────────────── */
+
+.sidebar-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.flow-btn-card {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 12px;
   border: 1.5px solid var(--border);
   border-radius: 12px;
-  background: var(--bg);
+  background: var(--code-bg);
   color: var(--text-h);
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s, color 0.2s;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
   font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 500;
-  text-align: center;
-  line-height: 1.3;
+  text-align: left;
+  width: 100%;
 
-  &:hover {
+  &:hover:not(:disabled) {
     border-color: var(--accent-border);
-    box-shadow: var(--shadow);
-    color: var(--accent);
+    background: var(--accent-bg);
   }
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
-  &:active {
-    transform: scale(0.98);
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 }
 
-.flow-btn-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--accent-bg);
-  color: var(--accent);
-  flex-shrink: 0;
-  transition: background 0.2s;
+.flow-btn-card--active {
+  border-color: #0ea5e9;
+  background: rgba(14, 165, 233, 0.06);
 
-  .flow-btn:hover & {
-    background: var(--accent-bg);
+  &:hover:not(:disabled) {
+    border-color: #0ea5e9;
+    background: rgba(14, 165, 233, 0.1);
   }
 }
 
-.flow-btn-label {
-  color: inherit;
-}
-
-/* ── Flow button loading state ───────────────────────────────────────────────── */
-
-.flow-btn--running {
+.flow-btn-card--running {
   border-color: var(--accent-border);
-  color: var(--accent);
+  background: var(--accent-bg);
   cursor: wait;
 }
 
+/* Active dot — top-right corner of card */
+.flow-btn-card-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+  flex-shrink: 0;
+}
+
+/* Icon container */
+.flow-btn-card-icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  overflow: hidden;
+  margin-top: 1px;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+/* Text block */
+.flow-btn-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.flow-btn-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-h);
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.flow-btn-card-subtitle {
+  font-size: 11.5px;
+  color: var(--text);
+  opacity: 0.65;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Spinner */
 @keyframes flow-spin {
   to { transform: rotate(360deg); }
 }
@@ -242,19 +272,140 @@
   animation: flow-spin 0.75s linear infinite;
 }
 
-/* ── Result section wrapper ──────────────────────────────────────────────────── */
+/* ── Profile selector ────────────────────────────────────────────────────────── */
 
-.flow-result-section-wrap {
-  margin-top: 40px;
+.sidebar-profile {
+  padding: 16px 16px 20px;
   border-top: 1px solid var(--border);
-  padding-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
 }
 
-.flow-result-section-header {
+.sidebar-profile-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.sidebar-profile-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  appearance: auto;
+
+  &:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-color: var(--accent-border);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.sidebar-profile-id-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.sidebar-profile-id-value {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text);
+  opacity: 0.55;
+  flex: 1;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.sidebar-profile-copy-btn {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+  margin-top: 1px;
+
+  &:hover {
+    opacity: 1;
+    background: var(--code-bg);
+    color: var(--accent);
+  }
+}
+
+/* ── Right content panel ─────────────────────────────────────────────────────── */
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+  min-width: 0;
+
+  @media (max-width: 1024px) {
+    padding: 24px 20px;
+  }
+}
+
+.app-content-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  gap: 10px;
+  text-align: center;
+  color: var(--text);
+}
+
+.app-content-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--code-bg);
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.app-content-empty-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.app-content-empty-hint {
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.7;
+  margin: 0;
+  max-width: 280px;
+  line-height: 1.5;
 }
 
 /* ── FlowResult component ────────────────────────────────────────────────────── */
@@ -350,8 +501,6 @@
   margin: 0 0 16px;
 }
 
-/* Portrait */
-
 .flow-result-portrait {
   display: flex;
   justify-content: center;
@@ -366,8 +515,6 @@
     box-shadow: var(--shadow);
   }
 }
-
-/* Identity key-value grid */
 
 .flow-result-fields {
   display: grid;
@@ -402,8 +549,6 @@
   }
 }
 
-/* Driving privileges */
-
 .flow-result-sublabel {
   display: block;
   font-size: 11px;
@@ -437,8 +582,6 @@
   border: 1px solid var(--accent-border);
 }
 
-/* Signature */
-
 .flow-result-signature {
   margin-top: 16px;
 
@@ -453,8 +596,6 @@
     background: #fff;
   }
 }
-
-/* Auth badge */
 
 .flow-result-auth-badge {
   display: inline-flex;
@@ -480,8 +621,6 @@
   background: rgba(220, 38, 38, 0.08);
   border-color: rgba(220, 38, 38, 0.25);
 }
-
-/* Auth boolean checks */
 
 .flow-result-checks {
   display: grid;
@@ -519,13 +658,11 @@
   text-align: center;
 }
 
-/* Auth info fields */
-
 .flow-result-auth-info {
   gap: 6px;
 }
 
-/* ── Annex B QR Modal ────────────────────────────────────────────────────────── */
+/* ── Annex B / W3C QR Modal ──────────────────────────────────────────────────── */
 
 .annexb-overlay {
   position: fixed;
@@ -683,5 +820,23 @@
   &:hover {
     border-color: var(--text);
     color: var(--text-h);
+  }
+}
+
+/* ── Responsive: stack on mobile ─────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .app-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-buttons {
+    grid-template-columns: 1fr 1fr;
   }
 }

@@ -5,11 +5,12 @@ import type { CloudSDKError } from "@/api/types/cloudSDKService";
 
 export interface FlowButtonProps {
   label: string;
+  subtitle?: string;
   icon?: ReactNode;
-  /** Async function that runs the full flow. Throw to signal failure. */
   onRun: () => Promise<unknown>;
-  /** Called with the resolved value of onRun on success. */
   onResult?: (data: unknown) => void;
+  onStart?: () => void;
+  isActive?: boolean;
   disabled?: boolean;
 }
 
@@ -17,8 +18,8 @@ function Spinner() {
   return (
     <svg
       className="flow-spinner"
-      width="24"
-      height="24"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -33,14 +34,18 @@ function Spinner() {
 
 export function FlowButton({
   label,
+  subtitle,
   icon,
   onRun,
   onResult,
+  onStart,
+  isActive,
   disabled,
 }: FlowButtonProps) {
   const [isRunning, setIsRunning] = useState(false);
 
   const handleClick = async () => {
+    onStart?.();
     setIsRunning(true);
     try {
       const result = await onRun();
@@ -58,13 +63,23 @@ export function FlowButton({
 
   return (
     <button
-      className={`flow-btn${isRunning ? " flow-btn--running" : ""}`}
+      className={`flow-btn-card${isRunning ? " flow-btn-card--running" : ""}${isActive ? " flow-btn-card--active" : ""}`}
       onClick={handleClick}
       disabled={disabled || isRunning}
       aria-busy={isRunning}
     >
-      <span className="flow-btn-icon">{isRunning ? <Spinner /> : icon}</span>
-      <span className="flow-btn-label">{isRunning ? "Running…" : label}</span>
+      {isActive && <span className="flow-btn-card-dot" aria-hidden="true" />}
+      <span className="flow-btn-card-icon">
+        {isRunning ? <Spinner /> : icon}
+      </span>
+      <span className="flow-btn-card-text">
+        <span className="flow-btn-card-title">
+          {isRunning ? "Running…" : label}
+        </span>
+        {subtitle && !isRunning && (
+          <span className="flow-btn-card-subtitle">{subtitle}</span>
+        )}
+      </span>
     </button>
   );
 }
