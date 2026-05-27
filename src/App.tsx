@@ -12,7 +12,7 @@ import { AnnexBFlowButton } from "./components/AnnexBFlowButton";
 import { W3CFlowButton } from "./components/W3CFlowButton";
 
 const PROFILE_OPTIONS = [
-  { label: "Age over 21", profileId: "8c5644fe-7437-402b-bb6b-cc6976817615" },
+  { label: "Age over 21", profileId: "366cbbc6-3bae-49a4-8f1e-c1e4a8b3874e" },
   { label: "Name check", profileId: "6d94df4f-b3dd-48e8-82ce-684f31cfeec3" },
 ] as const;
 
