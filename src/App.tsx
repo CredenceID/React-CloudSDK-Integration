@@ -13,7 +13,7 @@ import { W3CFlowButton } from "./components/W3CFlowButton";
 
 const PROFILE_OPTIONS = [
   { label: "Age over 21", profileId: "366cbbc6-3bae-49a4-8f1e-c1e4a8b3874e" },
-  { label: "Name check", profileId: "6d94df4f-b3dd-48e8-82ce-684f31cfeec3" },
+  { label: "ID check", profileId: "128b1b8e-4d60-11f1-bf44-023b9538e812" },
 ] as const;
 
 /* ── Brand icons ─────────────────────────────────────────────────────────────── */
