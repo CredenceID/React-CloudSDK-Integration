@@ -4,6 +4,52 @@ import { QRCodeSVG } from "qrcode.react";
 import { useCloudSDK } from "@/context/CloudSDKContext";
 import { initiateW3CApi, pollW3CResultApi } from "@/api/services/w3cService";
 import type { FlowResultData } from "./FlowResult";
+import type { W3CVerificationDetails } from "@/api/types/w3cService";
+
+interface W3CDocumentInput {
+  claims: Record<string, unknown> | null;
+  issuer: string | null;
+  issuanceDate: string | null;
+  expirationDate: string | null;
+  credentialType: string[] | null;
+  verificationDetails: W3CVerificationDetails | null;
+  success: boolean;
+}
+
+// Maps a single W3C credential result (top-level or one entry of `documents`)
+// into the common `{ identity, authentication }` shape rendered by FlowResult.
+function adaptW3CDocument({
+  claims,
+  issuer,
+  issuanceDate,
+  expirationDate,
+  credentialType,
+  verificationDetails: vd,
+  success,
+}: W3CDocumentInput) {
+  return {
+    identity: {
+      ...(claims ?? {}),
+      issuer: issuer ?? undefined,
+      issued: issuanceDate ?? undefined,
+      expires: expirationDate ?? undefined,
+      credential_type: credentialType?.join(", ") ?? undefined,
+    },
+    authentication: {
+      authenticationResult: success ? "SUCCESS" : "FAILED",
+      issuerRecognized: vd?.issuerTrusted,
+      issuerSignedAuthenticated: vd?.vcSignatureValid,
+      deviceSignedAuthenticated: vd?.vpSignatureValid,
+      dataIntegrity: vd ? vd.nonceMatches && vd.audienceMatches : undefined,
+      issuerAuthValid: vd?.notExpired,
+      deviceAuthValid: vd?.credentialTypeMatches,
+      issuerSubjectInfo: issuer ?? undefined,
+      msoValidity: issuanceDate && expirationDate
+        ? `${issuanceDate} – ${expirationDate}`
+        : undefined,
+    },
+  };
+}
 
 interface W3CFlowButtonProps {
   label: string;
@@ -106,30 +152,35 @@ export function W3CFlowButton({
 
           setPhase("idle");
 
-          const vd = result.verificationDetails;
           const adapted: FlowResultData = {
             res: result.success,
             resDetails: JSON.stringify({
-              identity: {
-                ...(result.claims ?? {}),
-                issuer: result.issuer ?? undefined,
-                issued: result.issuanceDate ?? undefined,
-                expires: result.expirationDate ?? undefined,
-                credential_type: result.credentialType?.join(", ") ?? undefined,
-              },
-              authentication: {
-                authenticationResult: result.success ? "SUCCESS" : "FAILED",
-                issuerRecognized: vd?.issuerTrusted,
-                issuerSignedAuthenticated: vd?.vcSignatureValid,
-                deviceSignedAuthenticated: vd?.vpSignatureValid,
-                dataIntegrity: vd ? vd.nonceMatches && vd.audienceMatches : undefined,
-                issuerAuthValid: vd?.notExpired,
-                deviceAuthValid: vd?.credentialTypeMatches,
-                issuerSubjectInfo: result.issuer ?? undefined,
-                msoValidity: result.issuanceDate && result.expirationDate
-                  ? `${result.issuanceDate} – ${result.expirationDate}`
-                  : undefined,
-              },
+              ...adaptW3CDocument({
+                claims: result.claims,
+                issuer: result.issuer,
+                issuanceDate: result.issuanceDate,
+                expirationDate: result.expirationDate,
+                credentialType: result.credentialType,
+                verificationDetails: result.verificationDetails,
+                success: result.success,
+              }),
+              // Multi-document profile: one identity/authentication pair per
+              // credential the wallet presented, alongside the top-level pair
+              // above (which mirrors the first document).
+              documents: result.documents?.length
+                ? result.documents.map((doc) => ({
+                    docType: doc.credentialType?.join(", "),
+                    ...adaptW3CDocument({
+                      claims: doc.claims,
+                      issuer: null,
+                      issuanceDate: null,
+                      expirationDate: null,
+                      credentialType: doc.credentialType,
+                      verificationDetails: doc.verificationDetails,
+                      success: doc.success ?? result.success,
+                    }),
+                  }))
+                : undefined,
             }),
           };
 

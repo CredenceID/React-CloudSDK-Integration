@@ -7,6 +7,7 @@ import {
   pollAnnexBResultApi,
 } from "@/api/services/annexBService";
 import type { FlowResultData } from "./FlowResult";
+import type { ResDetails } from "@/api/types/iso18013Service";
 
 interface AnnexBFlowButtonProps {
   label: string;
@@ -109,15 +110,18 @@ export function AnnexBFlowButton({
 
           setPhase("idle");
 
-          const identityObj = result.identity
-            ? (JSON.parse(result.identity) as Record<string, unknown>)
-            : {};
+          // result.identity is the same stringified `{ identity, authentication,
+          // documents? }` shape used by the ISO 18013 / OpenID4VP flows.
+          const details: ResDetails | null = result.identity
+            ? (JSON.parse(result.identity) as ResDetails)
+            : null;
           const adapted: FlowResultData = {
             res: result.success,
-            resDetails: JSON.stringify({ identity: identityObj }),
+            resDetails: result.identity ?? JSON.stringify({ identity: {}, authentication: {} }),
           };
 
-          const name = [identityObj.given_name, identityObj.family_name]
+          const claims = details?.identity ?? {};
+          const name = [claims.given_name, claims.family_name]
             .filter(Boolean)
             .join(" ");
 

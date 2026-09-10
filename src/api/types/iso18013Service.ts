@@ -23,26 +23,41 @@ export type DrivingPrivilege = {
   expiryDate: string;
 };
 
+export type IdentityClaims = {
+  family_name?: string;
+  given_name?: string;
+  birth_date?: string;
+  portrait?: string;             // base64 JPEG
+  signature_usual_mark?: string; // base64 JPEG
+  driving_privileges?: DrivingPrivilege[];
+  [key: string]: unknown;
+};
+
+export type AuthenticationDetails = {
+  authenticationResult: string;
+  issuerRecognized?: boolean;
+  issuerSignedAuthenticated?: boolean;
+  deviceSignedAuthenticated?: boolean;
+  dataIntegrity?: boolean;
+  msoValidity?: string;
+  issuerSubjectInfo?: string;
+  certValidationError?: string;
+  issuerAuthValid?: boolean;
+  deviceAuthValid?: boolean;
+};
+
+// One entry per credential when the wallet presented more than one document
+// (multi-document profile, e.g. mDL + EU PID in a single presentation).
+export type IdentityDocument = {
+  docType?: string;
+  identity: IdentityClaims;
+  authentication: AuthenticationDetails;
+};
+
 export type ResDetails = {
-  identity: {
-    family_name?: string;
-    given_name?: string;
-    birth_date?: string;
-    portrait?: string;             // base64 JPEG
-    signature_usual_mark?: string; // base64 JPEG
-    driving_privileges?: DrivingPrivilege[];
-    [key: string]: unknown;
-  };
-  authentication: {
-    authenticationResult: string;
-    issuerRecognized?: boolean;
-    issuerSignedAuthenticated?: boolean;
-    deviceSignedAuthenticated?: boolean;
-    dataIntegrity?: boolean;
-    msoValidity?: string;
-    issuerSubjectInfo?: string;
-    certValidationError?: string;
-    issuerAuthValid?: boolean;
-    deviceAuthValid?: boolean;
-  };
+  identity: IdentityClaims;
+  authentication: AuthenticationDetails;
+  // Mirrors the top-level identity/authentication for the first document;
+  // present only for multi-document presentations.
+  documents?: IdentityDocument[];
 };

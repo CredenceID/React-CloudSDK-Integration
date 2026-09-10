@@ -540,6 +540,11 @@
 }
 
 .flow-result-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.flow-result-doc {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
@@ -547,6 +552,21 @@
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
+}
+
+.flow-result-doc + .flow-result-doc {
+  border-top: 1px solid var(--border);
+}
+
+.flow-result-doc-label {
+  grid-column: 1 / -1;
+  padding: 14px 24px 0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  opacity: 0.75;
 }
 
 .flow-result-section {

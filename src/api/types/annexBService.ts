@@ -6,6 +6,8 @@ export type AnnexBInitiateResponse = {
 
 export type AnnexBResultResponse = {
   success: boolean;
-  identity: string | null; // stringified JSON of verified mdoc claims
+  // Stringified JSON of `{ identity, authentication, documents? }` — same
+  // shape as ResDetails (iso18013Service), parse with JSON.parse.
+  identity: string | null;
   error: string | null;    // failure reason; null when success is true
 };
