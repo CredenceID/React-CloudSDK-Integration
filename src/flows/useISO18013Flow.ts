@@ -26,7 +26,7 @@ export function useISO18013Flow() {
     try {
       credential = (await navigator.credentials.get({
         digital: {
-          requests: [{ protocol: "org-iso-mdoc", data: dcRequest.deviceRequest }],
+          requests: [{ protocol: "org-iso-mdoc", data: dcRequest }],
         },
         mediation: "required",
       })) as DigitalCredential | null;
