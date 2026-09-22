@@ -1,13 +1,22 @@
 import { toast } from "sonner";
 import { useCloudSDK } from "@/context/CloudSDKContext";
-import { getDocRequestApi, verifyDocRequestApi } from "@/api/services/iso18013Service";
+import { verifyDocRequestApi } from "@/api/services/iso18013Service";
+import { consumeDocRequestPrefetch, prefetchDocRequest } from "./dcRequestPrefetch";
 import { domExceptionMessage } from "./dcApiUtils";
 import type { ResDetails, VerifyDocRequestResponse } from "@/api/types/iso18013Service";
 
-export function useISO18013Flow() {
+export interface ISO18013Flow {
+  run: () => Promise<VerifyDocRequestResponse>;
+  // Warms the getDocRequest fetch — call from a pointerdown handler so
+  // run()'s navigator.credentials.get() lands inside the same user-gesture
+  // task on iOS Safari instead of after an awaited fetch.
+  prefetch: () => void;
+}
+
+export function useISO18013Flow(): ISO18013Flow {
   const { accessToken } = useCloudSDK();
 
-  return async (): Promise<VerifyDocRequestResponse> => {
+  const run = async (): Promise<VerifyDocRequestResponse> => {
     if (!accessToken) {
       throw new Error("SDK not initialized. Please authenticate first.");
     }
@@ -18,8 +27,8 @@ export function useISO18013Flow() {
       );
     }
 
-    //Initiate session on the server
-    const { sessionId, dcRequest } = await getDocRequestApi(accessToken);
+    //Initiate session on the server (reuses a pointerdown prefetch if warm)
+    const { sessionId, dcRequest } = await consumeDocRequestPrefetch(accessToken);
 
     //Invoke the wallet via the browser's Digital Credentials API.
     let credential: DigitalCredential | null = null;
@@ -73,4 +82,10 @@ export function useISO18013Flow() {
 
     return result;
   };
+
+  const prefetch = () => {
+    if (accessToken) prefetchDocRequest(accessToken);
+  };
+
+  return { run, prefetch };
 }

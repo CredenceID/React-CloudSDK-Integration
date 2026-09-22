@@ -8,6 +8,11 @@ export interface FlowButtonProps {
   subtitle?: string;
   icon?: ReactNode;
   onRun: () => Promise<unknown>;
+  // Warms any network prefetch onRun depends on. Fired on pointerdown,
+  // before click, so a flow that needs navigator.credentials.get() can run
+  // it inside the same user-gesture task on iOS Safari instead of after an
+  // awaited fetch.
+  onPrefetch?: () => void;
   onResult?: (data: unknown) => void;
   onStart?: () => void;
   isActive?: boolean;
@@ -37,12 +42,22 @@ export function FlowButton({
   subtitle,
   icon,
   onRun,
+  onPrefetch,
   onResult,
   onStart,
   isActive,
   disabled,
 }: FlowButtonProps) {
   const [isRunning, setIsRunning] = useState(false);
+
+  const handlePointerDown = () => {
+    if (disabled || isRunning) return;
+    try {
+      onPrefetch?.();
+    } catch {
+      // best-effort warm-up
+    }
+  };
 
   const handleClick = async () => {
     onStart?.();
@@ -64,6 +79,7 @@ export function FlowButton({
   return (
     <button
       className={`flow-btn-card${isRunning ? " flow-btn-card--running" : ""}${isActive ? " flow-btn-card--active" : ""}`}
+      onPointerDown={handlePointerDown}
       onClick={handleClick}
       disabled={disabled || isRunning}
       aria-busy={isRunning}

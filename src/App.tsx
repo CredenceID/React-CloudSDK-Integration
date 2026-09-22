@@ -64,7 +64,7 @@ type FlowId = "iso" | "openid4vp" | "annexb" | "w3c";
 
 function App() {
   const { setup, isAuthenticated, isLoading } = useCloudSDK();
-  const runISO18013Flow = useISO18013Flow();
+  const iso18013Flow = useISO18013Flow();
   const runOpenID4VPFlow = useOpenID4VPFlow();
   const [flowResult, setFlowResult] = useState<FlowResultData | null>(null);
   const [selectedProfile, setSelectedProfile] = useState(0);
@@ -111,7 +111,8 @@ function App() {
                 label="Digital Credentials API"
                 subtitle="org-iso-mdoc"
                 icon={<AppleIcon />}
-                onRun={runISO18013Flow}
+                onRun={iso18013Flow.run}
+                onPrefetch={iso18013Flow.prefetch}
                 onResult={handleResult}
                 onStart={() => setActiveFlow("iso")}
                 isActive={activeFlow === "iso"}
